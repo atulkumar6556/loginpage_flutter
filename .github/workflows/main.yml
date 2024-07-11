@@ -14,22 +14,20 @@ name: Build & Release
 jobs:
   build:
     name: Build & Release
-    runs-on: ubuntu-latest  # Specify Linux environment
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          node-version: '16'
+          channel: 'stable'
+          flutter-version: '3.22.0'  # Adjust version as needed
 
-      - name: Clear npm cache
-        run: npm cache clean --force
-
-      - name: Install dependencies
-        run: npm install
+      - name: Install Flutter dependencies
+        run: flutter pub get
 
       - name: Build Android APK
         run: flutter build apk --release --split-per-abi
