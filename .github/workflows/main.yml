@@ -14,7 +14,7 @@ name: Build & Release
 jobs:
   build:
     name: Build & Release
-    runs-on: macos-latest
+    runs-on: ubuntu-latest  # Specify Linux environment
 
     steps:
       - name: Checkout code
@@ -23,7 +23,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'  # Use a Node.js version compatible with your project
+          node-version: '14'
 
       - name: Clear npm cache
         run: npm cache clean --force
@@ -31,22 +31,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build and Release
-        run: |
-          flutter build apk --release --split-per-abi
-          flutter build ios --no-codesign
-          cd build/ios/iphoneos
-          mkdir Payload
-          cd Payload
-          ln -s ../Runner.app
-          cd ..
-          zip -r app.ipa Payload
+      - name: Build Android APK
+        run: flutter build apk --release --split-per-abi
 
       - name: Upload Release Artifacts
         uses: ncipollo/release-action@v1
         with:
           artifacts: |
             build/app/outputs/apk/release/*
-            build/ios/iphoneos/app.ipa
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.TOKEN }}
